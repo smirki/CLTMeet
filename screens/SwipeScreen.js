@@ -12,7 +12,7 @@ export default function SwipeScreen({ route, navigation }) {
     const fetchPeople = useCallback(async () => {
         try {
             if (user && user.token) {
-                const response = await axios.get('http://10.0.0.4:3009/people', {
+                const response = await axios.get('http://localhost:3009/people', {
                     headers: { Authorization: `Bearer ${user.token}` },
                 });
 
@@ -41,7 +41,7 @@ export default function SwipeScreen({ route, navigation }) {
     const swipeRight = async (targetUserId) => {
         try {
             if (user && user.token) {
-                await axios.post(`http://10.0.0.4:3009/swipe-right/${targetUserId}`, {}, {
+                await axios.post(`http://localhost:3009/swipe-right/${targetUserId}`, {}, {
                     headers: { Authorization: `Bearer ${user.token}` },
                 });
             } else {

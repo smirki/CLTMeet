@@ -9,7 +9,7 @@ export default function ProfileScreen({ navigation }) {
     useEffect(() => {
         async function fetchData() {
             const userId = await AsyncStorage.getItem('userId');
-            const response = await axios.get(`http://10.0.0.4:3009/users/${userId}`);
+            const response = await axios.get(`http://localhost:3009/users/${userId}`);
             setUser(response.data);
         }
 

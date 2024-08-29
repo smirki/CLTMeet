@@ -12,7 +12,7 @@ export default function EditPreferencesScreen({ navigation }) {
     useEffect(() => {
         async function fetchPreferences() {
             const userId = await AsyncStorage.getItem('userId');
-            const response = await axios.get(`http://10.0.0.4:3009/users/${userId}`);
+            const response = await axios.get(`http://localhost:3009/users/${userId}`);
             const { age, gender, about } = response.data;
             setAge(age);
             setGender(gender);
@@ -24,7 +24,7 @@ export default function EditPreferencesScreen({ navigation }) {
     const savePreferences = async () => {
         try {
             const userId = await AsyncStorage.getItem('userId');
-            await axios.put(`http://10.0.0.4:3009/users/${userId}/preferences`, { age, gender, about });
+            await axios.put(`http://localhost:3009/users/${userId}/preferences`, { age, gender, about });
             navigation.goBack();
         } catch (err) {
             setError('Failed to save preferences');

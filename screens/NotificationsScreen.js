@@ -9,7 +9,7 @@ export default function NotificationsScreen({ route }) {
 
     useEffect(() => {
         const fetchNotifications = async () => {
-            const response = await axios.get('http://10.0.0.4:3009/notifications', {
+            const response = await axios.get('http://localhost:3009/notifications', {
                 headers: { Authorization: `Bearer ${user.token}` },
             });
             setNotifications(response.data);
@@ -18,13 +18,13 @@ export default function NotificationsScreen({ route }) {
     }, []);
 
     const acceptMatch = async (targetUserId) => {
-        await axios.post(`http://10.0.0.4:3009/accept-match/${targetUserId}`, {}, {
+        await axios.post(`http://localhost:3009/accept-match/${targetUserId}`, {}, {
             headers: { Authorization: `Bearer ${user.token}` },
         });
     };
 
     const denyMatch = async (targetUserId) => {
-        await axios.post(`http://10.0.0.4:3009/deny-match/${targetUserId}`, {}, {
+        await axios.post(`http://localhost:3009/deny-match/${targetUserId}`, {}, {
             headers: { Authorization: `Bearer ${user.token}` },
         });
     };

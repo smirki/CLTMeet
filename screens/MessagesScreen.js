@@ -13,7 +13,7 @@ export default function MessagesScreen({ navigation }) {
             setUserId(id);
 
             try {
-                const response = await axios.get(`http://10.0.0.4:3009/social/chats/${id}`);
+                const response = await axios.get(`http://localhost:3009/social/chats/${id}`);
                 setChats(response.data);
             } catch (err) {
                 console.error(err);

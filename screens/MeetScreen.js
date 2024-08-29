@@ -4,7 +4,7 @@ import Swiper from 'react-native-deck-swiper';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_BASE_URL = 'http://10.0.0.4:3009';
+const API_BASE_URL = 'http://localhost:3009';
 
 export default function MeetScreen({ navigation }) {
     const [users, setUsers] = useState([]);

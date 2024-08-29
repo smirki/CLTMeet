@@ -8,7 +8,7 @@ export default function UserProfileScreen({ route }) {
 
     useEffect(() => {
         async function fetchUser() {
-            const response = await axios.get(`http://10.0.0.4:3009/users/${userId}`);
+            const response = await axios.get(`http://localhost:3009/users/${userId}`);
             setUser(response.data);
         }
         fetchUser();

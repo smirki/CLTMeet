@@ -8,8 +8,8 @@ export default function DiscoverScreen() {
 
     useEffect(() => {
         async function fetchData() {
-            const businessesResponse = await axios.get('http://10.0.0.4:3009/businesses');
-            const artistsResponse = await axios.get('http://10.0.0.4:3009/artists');
+            const businessesResponse = await axios.get('http://localhost:3009/businesses');
+            const artistsResponse = await axios.get('http://localhost:3009/artists');
 
             setBusinesses(businessesResponse.data);
             setArtists(artistsResponse.data);

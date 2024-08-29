@@ -3,7 +3,7 @@ import { View, FlatList, Text, TouchableOpacity, Alert, StyleSheet } from 'react
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_BASE_URL = 'http://10.0.0.4:3009';
+const API_BASE_URL = 'http://localhost:3009';
 
 export default function MatchesScreen() {
     const [matches, setMatches] = useState([]);

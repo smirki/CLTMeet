@@ -10,7 +10,7 @@ export default function ChatScreen({ route }) {
 
     useEffect(() => {
         async function fetchMessages() {
-            const response = await axios.get(`http://10.0.0.4:3009/social/chats/${chatId}/messages`);
+            const response = await axios.get(`http://localhost:3009/social/chats/${chatId}/messages`);
             setMessages(response.data);
         }
 
@@ -20,7 +20,7 @@ export default function ChatScreen({ route }) {
     const sendMessage = async () => {
         const userId = await AsyncStorage.getItem('userId');
         const token = await AsyncStorage.getItem('token');
-        await axios.post(`http://10.0.0.4:3009/social/chats/${chatId}/messages`, {
+        await axios.post(`http://localhost:3009/social/chats/${chatId}/messages`, {
             senderId: userId,
             content: newMessage,
         }, {

@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const BASE_URL = 'http://10.0.0.4:3009';
+const BASE_URL = 'http://localhost:3009';
 
 async function createUser(name, email, password, age, gender, about) {
     try {

@@ -5,7 +5,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
 
-const API_BASE_URL = 'http://10.0.0.4:3009';
+const API_BASE_URL = 'http://localhost:3009';
 
 export default function SignUpScreen({ navigation }) {
   const [name, setName] = useState('');

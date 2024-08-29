@@ -10,8 +10,8 @@ export default function FeedScreen() {
     useEffect(() => {
         async function fetchData() {
             const userId = await AsyncStorage.getItem('userId'); // Retrieve userId from AsyncStorage
-            const eventsResponse = await axios.get('http://10.0.0.4:3009/events');
-            const suggestionsResponse = await axios.get(`http://10.0.0.4:3009/search/recommendations/${userId}`);
+            const eventsResponse = await axios.get('http://localhost:3009/events');
+            const suggestionsResponse = await axios.get(`http://localhost:3009/search/recommendations/${userId}`);
 
             setEvents(eventsResponse.data);
             setSuggestedUsers(suggestionsResponse.data);
