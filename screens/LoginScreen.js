@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { View, TextInput, Button, Text, Alert, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, TextInput, Text, Alert, TouchableOpacity, Keyboard, KeyboardAvoidingView, Platform } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import styles from './styles';
 
 const API_BASE_URL = 'http://localhost:3009';
 
@@ -23,32 +24,51 @@ export default function LoginScreen({ navigation }) {
     }
   };
 
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
+      // Handle keyboard show event if needed
+    });
+    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+      // Handle keyboard hide event if needed
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
+
   return (
-    <View style={styles.container}>
-      <TextInput style={styles.input} placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" />
-      <TextInput style={styles.input} placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry />
-      <Button title="Login" onPress={login} />
-      {error ? <Text style={styles.errorText}>{error}</Text> : null}
-      <Button title="Sign Up" onPress={() => navigation.navigate('SignUp')} />
-    </View>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
+      <View style={styles.scrollContainer}>
+        <Text style={styles.title}>Clt<Text style={styles.meetText}>meet</Text></Text>
+
+        <TextInput style={styles.input} placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" />
+        <TextInput style={styles.input} placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry />
+
+        {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+        <TouchableOpacity style={styles.loginButton} onPress={login}>
+          <Text style={styles.loginButtonText}>Login</Text>
+        </TouchableOpacity>
+
+        <Text style={styles.orText}>or</Text>
+
+        <TouchableOpacity style={styles.ssoButton}>
+          <Text style={styles.ssoButtonText}>Login with Google</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.ssoButton}>
+          <Text style={styles.ssoButtonText}>Login with Apple</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.ssoButton} onPress={() => navigation.navigate('SignUp')}>
+          <Text style={styles.ssoButtonText}>Sign Up</Text>
+        </TouchableOpacity>
+      </View>
+    </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    justifyContent: 'center',
-  },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 10,
-    paddingHorizontal: 10,
-  },
-  errorText: {
-    color: 'red',
-    marginTop: 10,
-  },
-});
