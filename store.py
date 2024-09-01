@@ -35,6 +35,7 @@ if __name__ == "__main__":
     skip_directories = [
         os.path.join(start_directory, 'node_modules'),
         os.path.join(start_directory, 'backend', 'node_modules'),
+        os.path.join(start_directory, 'backend'),
         os.path.join(start_directory, 'assets'),
         os.path.join(start_directory, 'utils'),
         os.path.join(start_directory, '.git'),

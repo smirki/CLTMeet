@@ -1,19 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { View, TextInput, Text, Alert, ScrollView, TouchableOpacity, Keyboard, KeyboardAvoidingView, Platform } from 'react-native';
-import axios from 'axios';
+import React, { useState } from 'react';
+import { View, TextInput, Text, Alert, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform, Image } from 'react-native';
+import { supabase } from './supabaseClient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
 import styles from './styles';
-
-const API_BASE_URL = 'http://localhost:3009';
 
 export default function SignUpScreen({ navigation }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [age, setAge] = useState('18');
-  const [gender, setGender] = useState('male');
-  const [about, setAbout] = useState('');
   const [error, setError] = useState('');
 
   const signUp = async () => {
@@ -25,44 +20,29 @@ export default function SignUpScreen({ navigation }) {
 
       let location = await Location.getCurrentPositionAsync({});
 
-      const response = await axios.post(`${API_BASE_URL}/auth/register`, {
-        name,
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        age: parseInt(age),
-        gender,
-        about,
-        location: [location.coords.longitude, location.coords.latitude]
+        options: {
+          data: {
+            name,
+            location: [location.coords.longitude, location.coords.latitude],
+          },
+        },
       });
+      if (error) throw error;
 
-      if (response.data.token && response.data.user) {
-        const { token, user } = response.data;
-        await AsyncStorage.setItem('token', token);
-        await AsyncStorage.setItem('userId', user._id);
-        navigation.navigate('EditPreferences');
-      } else {
-        throw new Error('Invalid response from server');
-      }
+      await AsyncStorage.setItem('token', data.session.access_token);
+      await AsyncStorage.setItem('userId', data.user.id);
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'EditPreferences' }],
+      });
     } catch (err) {
-      console.error("SignUp Error:", err.response?.data?.error || err.message);
-      setError(err.response?.data?.error || 'Registration failed');
-      Alert.alert('Error', err.response?.data?.error || 'Registration failed');
+      setError(err.message || 'Registration failed');
+      Alert.alert('Error', err.message || 'Registration failed');
     }
   };
-
-  useEffect(() => {
-    const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
-      // Handle keyboard show event if needed
-    });
-    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
-      // Handle keyboard hide event if needed
-    });
-
-    return () => {
-      showSubscription.remove();
-      hideSubscription.remove();
-    };
-  }, []);
 
   return (
     <KeyboardAvoidingView
@@ -70,20 +50,37 @@ export default function SignUpScreen({ navigation }) {
       style={styles.container}
     >
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.title}>Cltmeet</Text>
+        <View style={styles.logoContainer}>
+          <Image source={require('../assets/logo.png')} style={styles.logo} />
+        </View>
+        <Text style={styles.title}>Clt<Text style={styles.meetText}>meet</Text></Text>
 
-        <TextInput style={styles.input} placeholder="Name" value={name} onChangeText={setName} />
-        <TextInput style={styles.input} placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" />
-        <TextInput style={styles.input} placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry />
-        
-        <TextInput style={styles.input} placeholder="Age" value={age} onChangeText={setAge} keyboardType="number-pad" />
-        <TextInput style={styles.input} placeholder="Gender" value={gender} onChangeText={setGender} />
-        <TextInput style={styles.input} placeholder="About" value={about} onChangeText={setAbout} multiline />
+        <TextInput
+          style={styles.input}
+          placeholder="Name"
+          value={name}
+          onChangeText={setName}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
 
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-        <TouchableOpacity style={styles.signUpButton} onPress={signUp}>
-          <Text style={styles.signUpButtonText}>Sign Up</Text>
+        <TouchableOpacity style={styles.button} onPress={signUp}>
+          <Text style={styles.buttonText}>Sign Up</Text>
         </TouchableOpacity>
 
         <Text style={styles.orText}>or</Text>
@@ -94,6 +91,10 @@ export default function SignUpScreen({ navigation }) {
 
         <TouchableOpacity style={styles.ssoButton}>
           <Text style={styles.ssoButtonText}>Sign Up with Apple</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+          <Text style={styles.linkText}>Already have an account? Log In</Text>
         </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>

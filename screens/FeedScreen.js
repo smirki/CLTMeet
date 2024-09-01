@@ -1,40 +1,74 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList } from 'react-native';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useState, useEffect } from 'react';
+import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
+import { supabase } from './supabaseClient';
+import styles from './styles';
 
-export default function FeedScreen() {
-    const [events, setEvents] = useState([]);
-    const [suggestedUsers, setSuggestedUsers] = useState([]);
+export default function FeedScreen({ navigation }) {
+  const [events, setEvents] = useState([]);
+  const [suggestedUsers, setSuggestedUsers] = useState([]);
 
-    useEffect(() => {
-        async function fetchData() {
-            const userId = await AsyncStorage.getItem('userId'); // Retrieve userId from AsyncStorage
-            const eventsResponse = await axios.get('http://localhost:3009/events');
-            const suggestionsResponse = await axios.get(`http://localhost:3009/search/recommendations/${userId}`);
+  useEffect(() => {
+    fetchEvents();
+    fetchSuggestedUsers();
+  }, []);
 
-            setEvents(eventsResponse.data);
-            setSuggestedUsers(suggestionsResponse.data);
-        }
+  async function fetchEvents() {
+    const { data, error } = await supabase
+      .from('events')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(10);
 
-        fetchData();
-    }, []);
+    if (error) console.error('Error fetching events:', error);
+    else setEvents(data);
+  }
 
-    return (
-        <View>
-            <Text>Latest Events</Text>
-            <FlatList
-                data={events}
-                renderItem={({ item }) => <Text>{item.title}</Text>}
-                keyExtractor={item => item._id}
-            />
+  async function fetchSuggestedUsers() {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .limit(5);
 
-            <Text>Suggested People</Text>
-            <FlatList
-                data={suggestedUsers}
-                renderItem={({ item }) => <Text>{item.name}</Text>}
-                keyExtractor={item => item._id}
-            />
-        </View>
-    );
+    if (error) console.error('Error fetching suggested users:', error);
+    else setSuggestedUsers(data);
+  }
+
+  const renderEvent = ({ item }) => (
+    <TouchableOpacity style={styles.eventCard}>
+      <Image source={{ uri: item.image }} style={styles.eventImage} />
+      <View style={styles.eventInfo}>
+        <Text style={styles.eventTitle}>{item.title}</Text>
+        <Text style={styles.eventDate}>{new Date(item.date).toLocaleDateString()}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+
+  const renderSuggestedUser = ({ item }) => (
+    <TouchableOpacity style={styles.suggestedUserCard} onPress={() => navigation.navigate('UserProfile', { userId: item.id })}>
+      <Image source={{ uri: item.avatar_url }} style={styles.suggestedUserAvatar} />
+      <Text style={styles.suggestedUserName}>{item.name}</Text>
+    </TouchableOpacity>
+  );
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.sectionTitle}>Upcoming Events</Text>
+      <FlatList
+        data={events}
+        renderItem={renderEvent}
+        keyExtractor={(item) => item.id.toString()}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+      />
+
+      <Text style={styles.sectionTitle}>Suggested People</Text>
+      <FlatList
+        data={suggestedUsers}
+        renderItem={renderSuggestedUser}
+        keyExtractor={(item) => item.id.toString()}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+      />
+    </View>
+  );
 }
