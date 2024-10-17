@@ -1,56 +1,39 @@
-import React, { useState, useRef } from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
 import Swiper from 'react-native-deck-swiper';
+import { StyleSheet } from 'react-native';
 
-export default function MeetScreen() {
-  const [cards, setCards] = useState([
-    { id: 1, name: 'John Doe', image: 'PLACEHOLDER_IMAGE_1', age: 25 },
-    { id: 2, name: 'Jane Smith', image: 'PLACEHOLDER_IMAGE_2', age: 27 },
-    { id: 3, name: 'Emily Johnson', image: 'PLACEHOLDER_IMAGE_3', age: 23 },
-    // Add more user cards here
+export default function MeetScreen({ navigation }) {
+  const [users] = useState([
+    { _id: '1', name: 'Alice', about: 'Loves hiking and the outdoors.' },
+    { _id: '2', name: 'Bob', about: 'Avid reader and coffee enthusiast.' },
+    { _id: '3', name: 'Charlie', about: 'Enjoys painting and music.' },
   ]);
 
-  const swiperRef = useRef(null);
-
-  const onSwipedLeft = (cardIndex) => {
-    console.log(`Swiped left on card ${cards[cardIndex].name}`);
-  };
-
-  const onSwipedRight = (cardIndex) => {
-    console.log(`Swiped right on card ${cards[cardIndex].name}`);
-  };
-
-  const renderCard = (card) => (
+  const renderCard = (user) => (
     <View style={styles.card}>
-      <Image source={{ uri: card.image }} style={styles.cardImage} />
-      <Text style={styles.cardName}>{card.name}, {card.age}</Text>
+      <Text style={styles.cardText}>{user.name}</Text>
+      <Text style={styles.cardText}>{user.about}</Text>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate('UserProfile', { userId: user._id })}
+      >
+        <Text style={styles.buttonText}>View Profile</Text>
+      </TouchableOpacity>
     </View>
   );
 
   return (
     <View style={styles.container}>
       <Swiper
-        ref={swiperRef}
-        cards={cards}
+        cards={users}
         renderCard={renderCard}
-        onSwipedLeft={onSwipedLeft}
-        onSwipedRight={onSwipedRight}
+        onSwipedRight={(index) => console.log('Swiped right on', users[index].name)}
+        onSwipedLeft={(index) => console.log('Swiped left on', users[index].name)}
         cardIndex={0}
-        backgroundColor={'#F8F3DF'}
+        backgroundColor="#F8F3DF"
         stackSize={3}
-        stackSeparation={15}
-        cardVerticalMargin={50}
-        disableTopSwipe
-        disableBottomSwipe
       />
-      <View style={styles.buttonsContainer}>
-        <TouchableOpacity style={styles.button} onPress={() => swiperRef.current.swipeLeft()}>
-          <Text style={styles.buttonText}>Nope</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => swiperRef.current.swipeRight()}>
-          <Text style={styles.buttonText}>Like</Text>
-        </TouchableOpacity>
-      </View>
     </View>
   );
 }
@@ -60,45 +43,31 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F8F3DF',
     justifyContent: 'center',
+    alignItems: 'center',
   },
   card: {
     flex: 1,
-    borderRadius: 20,
+    borderRadius: 10,
     borderWidth: 1,
     borderColor: '#e8e8e8',
     padding: 20,
     backgroundColor: '#fff',
     justifyContent: 'center',
-    alignItems: 'center',
-  },
-  cardImage: {
-    width: '100%',
-    height: 300,
-    borderRadius: 20,
     marginBottom: 20,
   },
-  cardName: {
-    fontSize: 24,
-    fontFamily: 'Recoleta',
+  cardText: {
+    fontSize: 18,
     color: '#231F20',
   },
-  buttonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 20,
-    paddingHorizontal: 20,
-  },
   button: {
+    marginTop: 10,
     backgroundColor: '#F48278',
-    borderRadius: 30,
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
+    padding: 10,
+    borderRadius: 10,
   },
   buttonText: {
-    color: '#F8F3DF',
-    fontSize: 18,
-    fontFamily: 'Recoleta',
+    color: '#fff',
+    fontSize: 16,
+    textAlign: 'center',
   },
 });
